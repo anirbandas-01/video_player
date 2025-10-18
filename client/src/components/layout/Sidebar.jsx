@@ -1,10 +1,10 @@
-import React from 'react'
+// src/components/layout/Sidebar.jsx
 import { Link, useLocation } from 'react-router-dom';
 import { Home, TrendingUp, History, Clock, ThumbsUp, Folder } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
-
- const location = useLocation();
+  const location = useLocation();
   const { user } = useAuth();
 
   const menuItems = [
@@ -21,10 +21,8 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-
-
   return (
- <aside className="fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-secondary border-r border-gray-800 overflow-y-auto">
+    <aside className="fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-secondary border-r border-gray-800 overflow-y-auto">
       <nav className="p-3">
         <div className="space-y-1">
           {menuItems.map((item) => (
@@ -67,6 +65,6 @@ const Sidebar = () => {
       </nav>
     </aside>
   );
-}
+};
 
-export default Sidebar
+export default Sidebar;
