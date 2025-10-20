@@ -1,26 +1,27 @@
-export default function VideoPlayer() {
-  return (
-    <div className="bg-card rounded-xl overflow-hidden shadow-lg">
-      <div className="w-full h-[360px] bg-black flex items-center justify-center text-gray-500">
-        Video Player Area
-      </div>
+export default function VideoPlayer({ video }) {
+  const defaultVideo = {
+    title: "Relaxing Music for Stress Relief",
+    channel: "Google",
+    views: "604,929,846 views",
+    url: "https://www.youtube.com/embed/2OEL4P1Rz04"
+  };
 
-      <div className="p-4">
-        <h2 className="text-xl font-semibold mb-2">Relaxing Music for Stress Relief</h2>
-        <p className="text-textSecondary text-sm">604,929,846 views</p>
-        <div className="flex justify-between items-center mt-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gray-600" />
-            <div>
-              <p className="text-sm font-medium">Google</p>
-              <p className="text-xs text-textSecondary">9.77M subscribers</p>
-            </div>
-          </div>
-          <button className="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition">
-            Subscribe
-          </button>
-        </div>
-      </div>
+  const currentVideo = video || defaultVideo;
+
+  return (
+    <div className="w-full bg-black rounded-xl overflow-hidden shadow-lg">
+      <iframe
+        width="100%"
+        height="480"
+        src={currentVideo.url}
+        title={currentVideo.title}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="rounded-xl"
+      />
+      <h2 className="text-xl font-semibold mt-3">{currentVideo.title}</h2>
+      <p className="text-gray-400">{currentVideo.channel} • {currentVideo.views}</p>
     </div>
   );
 }

@@ -22,3 +22,78 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+import { Home, Flame, PlaySquare, Clock, ThumbsUp, Settings, Youtube, Library, History, Heart } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+
+export default function Sidebar() {
+  const location = useLocation();
+
+  const menuSections = [
+    {
+      title: "Main",
+      items: [
+        { name: "Home", icon: "🏠" /* <Home size={20} />*/, path: "/" },
+        { name: "Trending", icon:"🔥" /*<Flame size={20} />*/, path: "/trending" },
+        { name: "Subscriptions", icon: "📺"/*<PlaySquare size={20} />*/, path: "/subscriptions" },
+      ],
+    },
+    {
+      title: "Library",
+      items: [
+        { name: "Library", icon:"📚" /*<Library size={20} />*/, path: "/library" },
+        { name: "History", icon: "🕒"/*<History size={20} />*/, path: "/history" },
+        { name: "Watch Later", icon: "⏰"/*<Clock size={20} />*/, path: "/watch-later" },
+        { name: "Liked Videos", icon: "❤️"/*<Heart size={20} />*/, path: "/liked" },
+      ],
+    },
+    {
+      title: "More from YouTube",
+      items: [
+        { name: "YouTube Premium", icon: "💎"/*<Youtube size={20} />*/, path: "/premium" },
+        { name: "YouTube Music", icon: "🎵"/*<Youtube size={20} />*/, path: "/music" },
+      ],
+    },
+    {
+      title: "Settings & Help",
+      items: [
+        { name: "Settings", icon: "⚙️"/*<Settings size={20} />*/, path: "/settings" },
+      ],
+    },
+  ];
+
+  return (
+    <aside className="w-64 bg-gray-900 h-screen text-white p-4 sticky top-0 overflow-y-auto border-r border-gray-800">
+      <h2 className="text-xl font-bold mb-6 text-red-500 flex items-center gap-2">
+        <Youtube className="text-red-500" /> MyTube
+      </h2>
+
+      {menuSections.map((section, i) => (
+        <div key={i} className="mb-6">
+          {section.title && (
+            <h3 className="text-sm text-gray-400 mb-2 uppercase tracking-wide">{section.title}</h3>
+          )}
+          <nav className="flex flex-col gap-2">
+            {section.items.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-3 p-2 rounded-lg transition ${
+                  location.pathname === item.path
+                    ? "bg-red-600"
+                    : "hover:bg-gray-700"
+                }`}
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+      ))}
+
+      <p className="text-xs text-gray-500 mt-6 border-t border-gray-700 pt-4">
+        © 2025 MyTube Clone
+      </p>
+    </aside>
+  );
+}

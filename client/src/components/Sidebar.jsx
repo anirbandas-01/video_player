@@ -1,79 +1,97 @@
-import { FaHome, FaCompass, FaHistory, FaClock, FaHeart, FaYoutube, FaCog, FaFlag, FaQuestionCircle } from "react-icons/fa";
-import { MdSubscriptions, MdVideoLibrary } from "react-icons/md";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Sidebar() {
+  const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Collapse sidebar automatically on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      setIsCollapsed(window.innerWidth < 768); // collapse below md
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const menuSections = [
+    {
+      title: "Main",
+      items: [
+        { name: "Home", icon: "🏠", path: "/" },
+        { name: "Trending", icon: "🔥", path: "/trending" },
+        { name: "Subscriptions", icon: "📺", path: "/subscriptions" },
+      ],
+    },
+    {
+      title: "Library",
+      items: [
+        { name: "Library", icon: "📚", path: "/library" },
+        { name: "History", icon: "🕒", path: "/history" },
+        { name: "Watch Later", icon: "⏰", path: "/watch-later" },
+        { name: "Liked Videos", icon: "❤️", path: "/liked" },
+      ],
+    },
+    {
+      title: "More from YouTube",
+      items: [
+        { name: "YouTube Premium", icon: "💎", path: "/premium" },
+        { name: "YouTube Music", icon: "🎵", path: "/music" },
+      ],
+    },
+    {
+      title: "Settings & Help",
+      items: [
+        { name: "Settings", icon: "⚙️", path: "/settings" },
+      ],
+    },
+  ];
+
   return (
-    <aside className="w-64 bg-sidebar text-gray-200 h-screen p-4 overflow-y-auto border-r border-gray-800">
-      {/* YouTube title */}
-      <div className="flex items-center gap-2 mb-6">
-        <FaYoutube className="text-accent text-2xl" />
-        <span className="text-lg font-semibold">YouTube</span>
-      </div>
-
-      {/* MAIN NAVIGATION */}
-      <div className="space-y-2 mb-6">
-        <SidebarItem icon={<FaHome />} label="Home" active />
-        <SidebarItem icon={<FaCompass />} label="Explore" />
-        <SidebarItem icon={<MdSubscriptions />} label="Subscriptions" />
-      </div>
-
-      <hr className="border-gray-700 my-4" />
-
-      {/* LIBRARY SECTION */}
-      <div className="space-y-2 mb-6">
-        <SidebarItem icon={<MdVideoLibrary />} label="Library" />
-        <SidebarItem icon={<FaHistory />} label="History" />
-        <SidebarItem icon={<FaClock />} label="Watch later" />
-        <SidebarItem icon={<FaHeart />} label="Liked videos" />
-      </div>
-
-      <hr className="border-gray-700 my-4" />
-
-      {/* SUBSCRIPTIONS SECTION */}
-      <div className="mb-6">
-        <h3 className="text-sm text-gray-400 mb-2 uppercase">Subscriptions</h3>
-        <SidebarItem avatar label="Made by Google" />
-        <SidebarItem avatar label="Adobe" />
-        <SidebarItem avatar label="HÖR Berlin" />
-      </div>
-
-      <hr className="border-gray-700 my-4" />
-
-      {/* MORE FROM YOUTUBE */}
-      <div className="mb-6">
-        <h3 className="text-sm text-gray-400 mb-2 uppercase">More from YouTube</h3>
-        <SidebarItem icon={<FaYoutube />} label="YouTube Premium" />
-        <SidebarItem icon={<FaYoutube />} label="YouTube Studio" />
-        <SidebarItem icon={<FaYoutube />} label="YouTube Music" />
-      </div>
-
-      <hr className="border-gray-700 my-4" />
-
-      {/* SETTINGS & FEEDBACK */}
-      <div className="space-y-2">
-        <SidebarItem icon={<FaCog />} label="Settings" />
-        <SidebarItem icon={<FaFlag />} label="Report history" />
-        <SidebarItem icon={<FaQuestionCircle />} label="Send feedback" />
-      </div>
-
-      <p className="text-xs text-gray-500 mt-6">© 2025 YouTube Clone</p>
-    </aside>
-  );
-}
-
-function SidebarItem({ icon, label, avatar, active }) {
-  return (
-    <div
-      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-gray-700 transition ${
-        active ? "bg-gray-700" : ""
+    <aside
+      className={`bg-gray-900 h-screen text-white p-4 sticky top-0 overflow-y-auto border-r border-gray-800 transition-all duration-300 ${
+        isCollapsed ? "w-20" : "w-64"
       }`}
     >
-      {avatar ? (
-        <div className="w-6 h-6 rounded-full bg-gray-500" />
-      ) : (
-        <div className="text-lg">{icon}</div>
+      {/* Brand / Logo */}
+      <h2
+        className={`text-xl font-bold mb-6 flex items-center gap-2 text-red-500 transition-opacity duration-300 ${
+          isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+        🎬 MyTube
+      </h2>
+
+      {/* Menu Sections */}
+      {menuSections.map((section, i) => (
+        <div key={i} className="mb-6">
+          {!isCollapsed && section.title && (
+            <h3 className="text-sm text-gray-400 mb-2 uppercase tracking-wide">{section.title}</h3>
+          )}
+          <nav className="flex flex-col gap-2">
+            {section.items.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-3 p-2 rounded-lg transition-colors duration-200 ${
+                  location.pathname === item.path ? "bg-red-600" : "hover:bg-gray-700"
+                }`}
+              >
+                <span className="text-lg">{item.icon}</span>
+                {!isCollapsed && <span>{item.name}</span>}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      ))}
+
+      {/* Footer */}
+      {!isCollapsed && (
+        <p className="text-xs text-gray-500 mt-6 border-t border-gray-700 pt-4">
+          © 2025 MyTube Clone
+        </p>
       )}
-      <span className="text-sm">{label}</span>
-    </div>
+    </aside>
   );
 }
