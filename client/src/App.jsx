@@ -11,6 +11,7 @@ import  Home from "./pages/Home";
 import Trending from "./pages/Trending";
 import Subscriptions from './pages/Subscription';
 import watch from './pages/Watch';
+import  Upload  from "./pages/Upload";
 
 export default function App() {
 
@@ -67,6 +68,7 @@ export default function App() {
                     <CommentSection />                  
                   </>
                 }/>
+                <Route path="/upload" element={<Upload />}/>
             </Routes>
           </div>
          
