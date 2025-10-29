@@ -10,7 +10,7 @@ const Upload = () => {
    const [loading, setLoading] = useState(false);
 
 
-   const handelSubmit = async (e)=> {
+   const handleSubmit = async (e)=> {
     e.preventDefault();
     if(!videoFile || !thumbnail){
         alert("please select both video and thumbnail!");
@@ -40,9 +40,9 @@ const Upload = () => {
    };
 
   return (
-    <div className='max-w-xl max-auto text-white space-y-4'>
+    <div className='mx-w-xl mx-auto text-white space-y-4'>
         <h2 className='text-2xl font-bold mb-4'>Upload a New Video</h2>
-        <form onSubmit={handelSubmit} className='space-y-3'>
+        <form onSubmit={handleSubmit} className='space-y-3'>
 
             <input type='text' placeholder='Title' className='w-full bg-gray-800 rounded p-2' value={title}
             onChange={(e)=> setTitle(e.target.value)}
@@ -66,7 +66,7 @@ const Upload = () => {
                     />
                 </div>
 
-                <button type='submit'  className='bg-read-600 px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50'>
+                <button type='submit'  className='bg-red-600 px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50'>
                     {loading ? "Uploading...": "upload video"}
                 </button>
             </div>

@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { Video } from "../models/video.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 // Get all videos with pagination
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -26,7 +27,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     // Filter by user
     if (userId) {
         pipeline.push({
-            $match: { owner: mongoose.Types.ObjectId(userId) }
+            $match: { owner: new mongoose.Types.ObjectId(userId) }
         });
     }
 

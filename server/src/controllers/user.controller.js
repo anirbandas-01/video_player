@@ -18,31 +18,7 @@ import mongoose from "mongoose";
     //check for user creation
     //return response
 
-    /* console.log("req.body:", req.body);
-
-    const {fullname, username, email, password} = req.body;
-        
-    if( !fullname || !username || !email || !password ){
-        return res.status(400).json({
-            success: false,
-            message: "ALL fields are required"
-        });
-    }
-        res.status(200).json({
-            success: true,
-            message: "User data received",
-            data: { fullname, username, email }
-        }); */
-        
         const { fullname, username, email, password}  = req.body;
-        /* console.log("email:", email);
-            */
-
-        /* // validation using ApiError
-                if (!fullname || !username || !email || !password) {
-                throw new ApiError(400, "All fields (fullname, username, email, password) are required");
-                }
-            */
             if (!fullname || fullname.trim() === "") {
             throw new ApiError(400, "Full name is required");
             }
@@ -55,8 +31,6 @@ import mongoose from "mongoose";
             if (!password || password.trim() === "") {
             throw new ApiError(400, "Password is required");
                 }
-
-            
             const existedUser = await User.findOne({ 
                 $or: [{ email }, { username }]
             })
@@ -87,7 +61,7 @@ import mongoose from "mongoose";
 
             const user = await User.create({
                 fullname,
-                avatar: avatar,
+                avatar: avatar?.url,
                 coverImage: coverImage?.url || "",
                 //coverImage: coverImage || "",
                 username: username.toLowerCase(),
@@ -136,14 +110,16 @@ import mongoose from "mongoose";
 
         const {email, username, password } =req.body
 
-        if(!username && !email ){
-            throw new ApiError(400, "username or password is required")
+        if(!username || !password ){
+            throw new ApiError(400, "username (or email) and password is required")
         }
-        //if we check only one then- (!(email || username))
+         
+        // Detect if the input is an email or username
+        const isEmail = username.includes("@");
 
-        const user = await User.findOne({
-            $or: [{username}, {email}]
-        }) 
+        const user = await User.findOne(
+            isEmail ? { email: username } : { username }
+        ) 
 
         if(!user){
             throw new ApiError(404, "User does not exits")

@@ -1,5 +1,9 @@
 import { FaYoutube, FaSearch, FaBell, FaMicrophone } from "react-icons/fa";
 import { MdVideoCall } from "react-icons/md";
+import {Link, useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+
 
 export default function Topbar() {
   return (

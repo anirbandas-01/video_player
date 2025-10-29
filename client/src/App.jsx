@@ -12,6 +12,8 @@ import Trending from "./pages/Trending";
 import Subscriptions from './pages/Subscription';
 import watch from './pages/Watch';
 import  Upload  from "./pages/Upload";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 export default function App() {
 
@@ -69,6 +71,8 @@ export default function App() {
                   </>
                 }/>
                 <Route path="/upload" element={<Upload />}/>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
             </Routes>
           </div>
          
