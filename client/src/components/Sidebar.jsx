@@ -1,85 +1,85 @@
-import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Home, Compass, PlaySquare, Clock, ThumbsUp, Folder, Settings } from "lucide-react";
+const Sidebar = ({ isOpen }) => {
+  const [activeItem, setActiveItem] = useState('home');
 
-export default function Sidebar() {
-  const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const menuItems = [
+    { id: 'home', icon: Home, label: 'Home' },
+    { id: 'trending', icon: Compass, label: 'Trending' },
+    { id: 'subscriptions', icon: PlaySquare, label: 'Subscriptions' },
+  ];
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsCollapsed(window.innerWidth < 1024);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const menuSections = [
-    {
-      items: [
-        { name: "Home", icon: Home, path: "/" },
-        { name: "Trending", icon: Compass, path: "/trending" },
-        { name: "Subscriptions", icon: PlaySquare, path: "/subscriptions" },
-      ],
-    },
-    {
-      items: [
-        { name: "Library", icon: Folder, path: "/library" },
-        { name: "History", icon: Clock, path: "/history" },
-        { name: "Liked Videos", icon: ThumbsUp, path: "/liked" },
-      ],
-    },
-    {
-      items: [
-        { name: "Settings", icon: Settings, path: "/settings" },
-      ],
-    },
+  const libraryItems = [
+    { id: 'library', icon: Folder, label: 'Library' },
+    { id: 'history', icon: Clock, label: 'History' },
+    { id: 'liked', icon: ThumbsUp, label: 'Liked Videos' },
   ];
 
   return (
-    <aside
-      className={`bg-[#0f0f0f] h-screen sticky top-0 overflow-y-auto transition-all duration-300 ${
-        isCollapsed ? "w-[72px]" : "w-[240px]"
-      }`}
-      style={{
-        scrollbarWidth: 'thin',
-        scrollbarColor: '#3f3f3f #0f0f0f'
-      }}
-    >
-      <div className="flex flex-col h-full pt-2 pb-4">
-        {menuSections.map((section, i) => (
-          <div key={i} className={`${i > 0 ? 'border-t border-[#3f3f3f] mt-2 pt-2' : ''}`}>
-            <nav className="flex flex-col">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`flex items-center gap-6 px-3 mx-3 py-2.5 rounded-lg transition-all duration-200 group ${
-                      isActive 
-                        ? 'bg-[#272727] text-white' 
-                        : 'text-[#f1f1f1] hover:bg-[#272727]'
-                    }`}
-                  >
-                    <Icon 
-                      size={24} 
-                      className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-[#f1f1f1]'}`}
-                    />
-                    {!isCollapsed && (
-                      <span className="text-sm font-medium whitespace-nowrap">
-                        {item.name}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        ))}
+    <aside className={`fixed left-0 top-14 bottom-0 bg-[#0f0f0f] border-r border-[#272727] transition-all duration-300 overflow-y-auto z-40 ${isOpen ? 'w-60' : 'w-20'}`}>
+      <div className="py-3">
+        {/* Main Menu */}
+        <div className="space-y-1 px-3">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveItem(item.id)}
+              className={`w-full flex items-center gap-6 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                activeItem === item.id
+                  ? 'bg-[#272727] text-white'
+                  : 'text-[#aaa] hover:bg-[#272727] hover:text-white'
+              }`}
+            >
+              <item.icon className="w-6 h-6 flex-shrink-0" />
+              {isOpen && <span className="text-sm font-medium">{item.label}</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-[#272727] my-3 mx-3" />
+
+        {/* Library */}
+        <div className="space-y-1 px-3">
+          {isOpen && <p className="px-3 py-2 text-sm font-semibold text-white">Library</p>}
+          {libraryItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveItem(item.id)}
+              className={`w-full flex items-center gap-6 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+                activeItem === item.id
+                  ? 'bg-[#272727] text-white'
+                  : 'text-[#aaa] hover:bg-[#272727] hover:text-white'
+              }`}
+            >
+              <item.icon className="w-6 h-6 flex-shrink-0" />
+              {isOpen && <span className="text-sm font-medium">{item.label}</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Subscriptions */}
+        {isOpen && (
+          <>
+            <div className="h-px bg-[#272727] my-3 mx-3" />
+            <div className="px-3">
+              <p className="px-3 py-2 text-sm font-semibold text-white">Subscriptions</p>
+              {[1, 2, 3, 4].map((i) => (
+                <button
+                  key={i}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#272727] transition-colors"
+                >
+                  <div className={`w-6 h-6 rounded-full bg-gradient-to-br ${
+                    i === 1 ? 'from-red-500 to-orange-500' :
+                    i === 2 ? 'from-blue-500 to-cyan-500' :
+                    i === 3 ? 'from-purple-500 to-pink-500' :
+                    'from-green-500 to-emerald-500'
+                  }`} />
+                  <span className="text-sm text-[#aaa]">Channel {i}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </aside>
   );
-}
+};
