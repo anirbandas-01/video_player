@@ -1,14 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Home, Compass, PlaySquare, Clock, ThumbsUp, Folder, Settings } from "lucide-react";
 
 export default function Sidebar() {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Collapse sidebar automatically on small screens
   useEffect(() => {
     const handleResize = () => {
-      setIsCollapsed(window.innerWidth < 768); // collapse below md
+      setIsCollapsed(window.innerWidth < 1024);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -17,81 +17,69 @@ export default function Sidebar() {
 
   const menuSections = [
     {
-      title: "Main",
       items: [
-        { name: "Home", icon: "🏠", path: "/" },
-        { name: "Trending", icon: "🔥", path: "/trending" },
-        { name: "Subscriptions", icon: "📺", path: "/subscriptions" },
+        { name: "Home", icon: Home, path: "/" },
+        { name: "Trending", icon: Compass, path: "/trending" },
+        { name: "Subscriptions", icon: PlaySquare, path: "/subscriptions" },
       ],
     },
     {
-      title: "Library",
       items: [
-        { name: "Library", icon: "📚", path: "/library" },
-        { name: "History", icon: "🕒", path: "/history" },
-        { name: "Watch Later", icon: "⏰", path: "/watch-later" },
-        { name: "Liked Videos", icon: "❤️", path: "/liked" },
+        { name: "Library", icon: Folder, path: "/library" },
+        { name: "History", icon: Clock, path: "/history" },
+        { name: "Liked Videos", icon: ThumbsUp, path: "/liked" },
       ],
     },
     {
-      title: "More from YouTube",
       items: [
-        { name: "YouTube Premium", icon: "💎", path: "/premium" },
-        { name: "YouTube Music", icon: "🎵", path: "/music" },
-      ],
-    },
-    {
-      title: "Settings & Help",
-      items: [
-        { name: "Settings", icon: "⚙️", path: "/settings" },
+        { name: "Settings", icon: Settings, path: "/settings" },
       ],
     },
   ];
 
   return (
     <aside
-      className={`bg-gray-900 h-screen text-white p-4 sticky top-0 overflow-y-auto border-r border-gray-800 transition-all duration-300 ${
-        isCollapsed ? "w-20" : "w-64"
+      className={`bg-[#0f0f0f] h-screen sticky top-0 overflow-y-auto transition-all duration-300 ${
+        isCollapsed ? "w-[72px]" : "w-[240px]"
       }`}
+      style={{
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#3f3f3f #0f0f0f'
+      }}
     >
-      {/* Brand / Logo */}
-      <h2
-        className={`text-xl font-bold mb-6 flex items-center gap-2 text-red-500 transition-opacity duration-300 ${
-          isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-      >
-        🎬 MyTube
-      </h2>
-
-      {/* Menu Sections */}
-      {menuSections.map((section, i) => (
-        <div key={i} className="mb-6">
-          {!isCollapsed && section.title && (
-            <h3 className="text-sm text-gray-400 mb-2 uppercase tracking-wide">{section.title}</h3>
-          )}
-          <nav className="flex flex-col gap-2">
-            {section.items.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`flex items-center gap-3 p-2 rounded-lg transition-colors duration-200 ${
-                  location.pathname === item.path ? "bg-red-600" : "hover:bg-gray-700"
-                }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                {!isCollapsed && <span>{item.name}</span>}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      ))}
-
-      {/* Footer */}
-      {!isCollapsed && (
-        <p className="text-xs text-gray-500 mt-6 border-t border-gray-700 pt-4">
-          © 2025 MyTube Clone
-        </p>
-      )}
+      <div className="flex flex-col h-full pt-2 pb-4">
+        {menuSections.map((section, i) => (
+          <div key={i} className={`${i > 0 ? 'border-t border-[#3f3f3f] mt-2 pt-2' : ''}`}>
+            <nav className="flex flex-col">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`flex items-center gap-6 px-3 mx-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                      isActive 
+                        ? 'bg-[#272727] text-white' 
+                        : 'text-[#f1f1f1] hover:bg-[#272727]'
+                    }`}
+                  >
+                    <Icon 
+                      size={24} 
+                      className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-[#f1f1f1]'}`}
+                    />
+                    {!isCollapsed && (
+                      <span className="text-sm font-medium whitespace-nowrap">
+                        {item.name}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
+      </div>
     </aside>
   );
 }
