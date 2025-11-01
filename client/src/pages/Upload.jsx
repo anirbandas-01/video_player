@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react';
+import { Upload as UploadIcon, Video, Image, FileText } from 'lucide-react';
+import axios from 'axios';
 
 const Upload = () => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [videoFile, setVideoFile] = useState(null);
+  const [thumbnail, setThumbnail] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-   const [title, setTitle] = useState("");
-   const [description, setDescription] = useState("");
-   const [videoFile, setVideoFile] = useState(null);
-   const [thumbnail, setThumbnail] = useState(null);
-   const [loading, setLoading] = useState(false);
-
-
-   const handleSubmit = async (e)=> {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(!videoFile || !thumbnail){
-        alert("please select both video and thumbnail!");
-        return;
+    if (!videoFile || !thumbnail) {
+      alert("Please select both video and thumbnail!");
+      return;
     }
 
     const formData = new FormData();
@@ -24,55 +24,138 @@ const Upload = () => {
     formData.append("thumbnail", thumbnail);
 
     try {
-        setLoading(true);
-        const res = await axios.post("http://localhost:8000/api/v1/videos/upload", formData,{
-            headers: {"Content-Type": "multipart/form-data"},
-            withCredentials: true,
-        });
-        console.log("upload success:", res.data);
-        alert("✅ Video uploaded successfully!");
+      setLoading(true);
+      const res = await axios.post("http://localhost:8000/api/v1/videos/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(progress);
+        }
+      });
+      alert("✅ Video uploaded successfully!");
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setVideoFile(null);
+      setThumbnail(null);
+      setUploadProgress(0);
     } catch (err) {
-         console.error("Upload failed:", err);
-         alert("❌ Upload failed");
+      console.error("Upload failed:", err);
+      alert("❌ Upload failed");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-   };
+  };
 
   return (
-    <div className='mx-w-xl mx-auto text-white space-y-4'>
-        <h2 className='text-2xl font-bold mb-4'>Upload a New Video</h2>
-        <form onSubmit={handleSubmit} className='space-y-3'>
+    <div className='max-w-4xl mx-auto p-8 animate-fade-in'>
+      <div className="mb-8">
+        <h2 className='text-3xl font-bold text-white mb-2'>Upload Video</h2>
+        <p className="text-[#aaa]">Share your content with the world</p>
+      </div>
 
-            <input type='text' placeholder='Title' className='w-full bg-gray-800 rounded p-2' value={title}
-            onChange={(e)=> setTitle(e.target.value)}
+      <form onSubmit={handleSubmit} className='bg-[#1a1a1a] border border-[#272727] rounded-2xl p-8 space-y-6 shadow-2xl'>
+        
+        {/* Title Input */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+            <FileText className="w-4 h-4" />
+            Title *
+          </label>
+          <input 
+            type='text' 
+            placeholder='Enter video title' 
+            className='w-full bg-[#0f0f0f] border border-[#3f3f3f] rounded-lg p-4 text-white placeholder-[#666] focus:border-[#3ea6ff] focus:outline-none transition-colors'
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Description Textarea */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+            <FileText className="w-4 h-4" />
+            Description *
+          </label>
+          <textarea 
+            placeholder='Tell viewers about your video' 
+            className='w-full bg-[#0f0f0f] border border-[#3f3f3f] rounded-lg p-4 text-white placeholder-[#666] focus:border-[#3ea6ff] focus:outline-none transition-colors min-h-[120px] resize-none'
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Video File Upload */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+            <Video className="w-4 h-4" />
+            Video File *
+          </label>
+          <div className="relative">
+            <input 
+              type='file' 
+              accept='video/*' 
+              onChange={(e) => setVideoFile(e.target.files[0])}
+              className='w-full text-sm text-[#aaa] file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#272727] file:text-white hover:file:bg-[#3f3f3f] file:cursor-pointer cursor-pointer'
+              required
             />
+          </div>
+          {videoFile && (
+            <p className="mt-2 text-sm text-[#aaa]">Selected: {videoFile.name}</p>
+          )}
+        </div>
 
-            <textarea placeholder='Description' className='w-full bg-gray-800 rounded p-2' value={description}
-            onChange={(e)=> setDescription(e.target.value)}
+        {/* Thumbnail Upload */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+            <Image className="w-4 h-4" />
+            Thumbnail *
+          </label>
+          <div className="relative">
+            <input 
+              type='file' 
+              accept='image/*'
+              onChange={(e) => setThumbnail(e.target.files[0])}
+              className='w-full text-sm text-[#aaa] file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#272727] file:text-white hover:file:bg-[#3f3f3f] file:cursor-pointer cursor-pointer'
+              required
             />
-            
-            <div>
-                <label>🎥 Select Video File:</label>
-                
-                <input type='file' accept='video/*' 
-                 onChange={(e)=> setVideoFile(e.target.files[0])}
-                />
-                
-                <div>
-                    <label>🖼️ Select Thumbnail:</label>
-                    <input type='file' accept='image/*'
-                     onChange={(e)=>setThumbnail(e.target.files[0])}
-                    />
-                </div>
+          </div>
+          {thumbnail && (
+            <p className="mt-2 text-sm text-[#aaa]">Selected: {thumbnail.name}</p>
+          )}
+        </div>
 
-                <button type='submit'  className='bg-red-600 px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50'>
-                    {loading ? "Uploading...": "upload video"}
-                </button>
+        {/* Upload Progress */}
+        {loading && (
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm text-[#aaa]">
+              <span>Uploading...</span>
+              <span>{uploadProgress}%</span>
             </div>
-        </form>
-    </div>
-  )
-}
+            <div className="w-full bg-[#272727] rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-red-600 h-full transition-all duration-300 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
 
-export default Upload
+        {/* Submit Button */}
+        <button 
+          type='submit' 
+          disabled={loading}
+          className='w-full bg-red-600 py-4 rounded-lg font-semibold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
+        >
+          <UploadIcon className="w-5 h-5" />
+          {loading ? 'Uploading...' : 'Upload Video'}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Upload;

@@ -1,3 +1,6 @@
+import React from 'react';
+import { MoreVertical } from 'lucide-react';
+
 const RecommendedList = ({ videos, onSelect }) => {
   return (
     <div className="space-y-3">
@@ -7,6 +10,7 @@ const RecommendedList = ({ videos, onSelect }) => {
           className="flex gap-2 cursor-pointer hover:bg-[#272727] p-2 rounded-lg transition-colors group"
           onClick={() => onSelect(video)}
         >
+          {/* Thumbnail */}
           <div className="relative w-40 h-[90px] flex-shrink-0 rounded-lg overflow-hidden bg-[#3f3f3f]">
             <img
               src={video.thumbnail}
@@ -18,6 +22,7 @@ const RecommendedList = ({ videos, onSelect }) => {
             </div>
           </div>
 
+          {/* Video Info */}
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-medium text-white line-clamp-2 mb-1 leading-snug">
               {video.title}
@@ -26,12 +31,13 @@ const RecommendedList = ({ videos, onSelect }) => {
               {video.channel}
             </p>
             <div className="flex items-center gap-1 text-xs text-[#aaa] mt-1">
-              <span>{video.views}</span>
+              <span>{video.views} views</span>
               <span>•</span>
               <span>{video.uploadDate}</span>
             </div>
           </div>
 
+          {/* More Options */}
           <button className="flex-shrink-0 opacity-0 group-hover:opacity-100 hover:bg-[#3f3f3f] p-1 rounded-full transition-all">
             <MoreVertical className="w-4 h-4 text-white" />
           </button>
@@ -40,3 +46,5 @@ const RecommendedList = ({ videos, onSelect }) => {
     </div>
   );
 };
+
+export default RecommendedList;
