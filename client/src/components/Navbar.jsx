@@ -1,4 +1,3 @@
-// File: client/src/components/Navbar.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Search, Video, Bell, User, LogOut, Settings, Upload } from 'lucide-react';
@@ -49,6 +48,7 @@ const Navbar = ({ toggleSidebar }) => {
           {user ? (
             <>
               <button 
+                onClick={() => navigate('/upload')}
                 className="p-2 hover:bg-gray-100 rounded-full"
                 title="Upload Video"
               >
@@ -136,22 +136,6 @@ const Navbar = ({ toggleSidebar }) => {
 };
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* import React from 'react';

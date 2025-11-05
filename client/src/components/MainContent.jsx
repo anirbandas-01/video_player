@@ -1,116 +1,103 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CategoryPills from './CategoryPills';
 import VideoCard from './VideoCard';
+import api from '../api/api';
 
 const MainContent = ({ sidebarOpen }) => {
-  const videos = [
-    {
-      thumbnail: 'https://picsum.photos/seed/1/400/225',
-      title: 'Building a Full Stack Application with React and Node.js',
-      channel: 'Code Masters',
-      views: '1.2M',
-      uploadTime: '2 days ago',
-      duration: '15:30'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/2/400/225',
-      title: 'Amazing Nature Documentary: Wildlife in 4K',
-      channel: 'Nature Films',
-      views: '856K',
-      uploadTime: '1 week ago',
-      duration: '42:15'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/3/400/225',
-      title: 'Top 10 Travel Destinations for 2024',
-      channel: 'Travel Vlog',
-      views: '2.1M',
-      uploadTime: '3 days ago',
-      duration: '12:45'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/4/400/225',
-      title: 'Learn Python in 60 Minutes - Complete Tutorial',
-      channel: 'Programming Hub',
-      views: '3.4M',
-      uploadTime: '1 month ago',
-      duration: '58:20'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/5/400/225',
-      title: 'Epic Gaming Montage - Best Moments 2024',
-      channel: 'Gaming Pro',
-      views: '645K',
-      uploadTime: '5 days ago',
-      duration: '10:15'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/6/400/225',
-      title: 'Cooking the Perfect Pasta: Italian Chef Guide',
-      channel: 'Chef Kitchen',
-      views: '420K',
-      uploadTime: '2 weeks ago',
-      duration: '18:30'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/7/400/225',
-      title: 'Morning Workout Routine for Beginners',
-      channel: 'Fitness Life',
-      views: '1.8M',
-      uploadTime: '4 days ago',
-      duration: '25:10'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/8/400/225',
-      title: 'Latest Tech News: AI Breakthrough 2024',
-      channel: 'Tech Today',
-      views: '920K',
-      uploadTime: '1 day ago',
-      duration: '14:55'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/9/400/225',
-      title: 'Meditation and Mindfulness: 10 Minute Guide',
-      channel: 'Calm Mind',
-      views: '567K',
-      uploadTime: '1 week ago',
-      duration: '10:00'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/10/400/225',
-      title: 'DIY Home Improvement Projects Anyone Can Do',
-      channel: 'Home DIY',
-      views: '1.1M',
-      uploadTime: '3 weeks ago',
-      duration: '22:40'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/11/400/225',
-      title: 'Electric Cars Review: Top 5 Models Compared',
-      channel: 'Auto Review',
-      views: '2.3M',
-      uploadTime: '6 days ago',
-      duration: '16:25'
-    },
-    {
-      thumbnail: 'https://picsum.photos/seed/12/400/225',
-      title: 'Jazz Music Playlist - Relaxing Evening Vibes',
-      channel: 'Music Stream',
-      views: '3.8M',
-      uploadTime: '2 months ago',
-      duration: '1:45:30'
-    }
-  ];
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  return (
+  useEffect(()=> {
+    fetchVideos();
+  },[page]);
+
+  const fetchVideos = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/videos?page=${page}&limit=12`);
+
+      if(response.data.success){
+        const newVideos = response.data.data.docs || [];
+        setVideos(prev => page === 1 ? newVideos : [...prev, ...newVideos]);
+        setHasMore(response.data.data.hasNextPage);
+      }
+    } catch (err) {
+      console.error('Error fetching videos:', err);
+      setError('Failed to load videos');
+    }finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      setPage(prev => prev + 1);
+    }
+  };
+
+ if (error && videos.length === 0) {
+    return (
+      <main className={`pt-14 transition-all duration-300 ${sidebarOpen ? 'ml-60' : 'ml-20'}`}>
+        <CategoryPills />
+        <div className="p-6 text-center">
+          <p className="text-red-500">{error}</p>
+          <button 
+            onClick={() => {
+              setPage(1);
+              fetchVideos();
+            }}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+return (
     <main className={`pt-14 transition-all duration-300 ${sidebarOpen ? 'ml-60' : 'ml-20'}`}>
       <CategoryPills />
       <div className="p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {videos.map((video, idx) => (
-            <VideoCard key={idx} video={video} />
-          ))}
-        </div>
+        {loading && videos.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, idx) => (
+              <div key={idx} className="animate-pulse">
+                <div className="bg-gray-300 aspect-video rounded-xl"></div>
+                <div className="flex gap-3 mt-3">
+                  <div className="w-9 h-9 bg-gray-300 rounded-full"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-300 rounded"></div>
+                    <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {videos.map((video) => (
+                <VideoCard key={video._id} video={video} />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={loadMore}
+                  disabled={loading}
+                  className="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium disabled:opacity-50"
+                >
+                  {loading ? 'Loading...' : 'Load More'}
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </main>
   );
