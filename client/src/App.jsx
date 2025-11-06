@@ -6,6 +6,7 @@ import MainContent from './components/MainContent';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UploadVideo from './pages/UploadVideo';
+import VideoPlayer from './pages/VideoPlayer';
 import { useAuth } from './context/AuthContext';
 
 // Protected Route Component
@@ -72,8 +73,9 @@ const App = () => {
         {/* Video Player Page - Coming Soon */}
         <Route 
           path='/video/:videoId' 
-          element={
-            <>
+          element={ 
+            <VideoPlayer />
+            /* <>
               <Navbar toggleSidebar={toggleSidebar} />
               <Sidebar isOpen={sidebarOpen} />
               <div className={`pt-14 transition-all duration-300 ${sidebarOpen ? 'ml-60' : 'ml-20'}`}>
@@ -82,7 +84,7 @@ const App = () => {
                   <p className="text-gray-600 mt-2">Video player will be implemented here</p>
                 </div>
               </div>
-            </>
+            </> */
           }
         />
         
